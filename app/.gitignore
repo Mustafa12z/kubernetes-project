@@ -1,5 +1,43 @@
-.env
 .DS_Store
+.env
+!/.gitattributes
+!/package.json
+!/LICENSE
+!/.npmignore
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+pids
+*.pid
+*.seed
+*.pid.lock
+lib-cov
+coverage
+*.lcov
+.nyc_output
+build/Release
+node_modules/
+jspm_packages/
+*.tsbuildinfo
+.eslintcache
+*.tgz
+.yarn-integrity
+.cache
+!/test/
+!/tsconfig.json
+!/tsconfig.dev.json
+!/src/
+/lib
+/dist/
+!/.eslintrc.json
+/build/
+!/project.json
+.terragrunt*
+/test-reports
 
 # Local .terraform directories
 **/.terraform/*
@@ -38,6 +76,3 @@ override.tf.json
 # Ignore CLI configuration files
 .terraformrc
 terraform.rc
-
-.terraform**
-

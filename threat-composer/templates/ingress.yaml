@@ -1,0 +1,25 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: threat-composer
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
+    cert-manager.io/cluster-issuer: issuer
+    external-dns.alpha.kubernetes.io/hostname: labs.mustafamirreh.com
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: labs.mustafamirreh.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: threat-composer
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - labs.mustafamirreh.com
+    secretName: threat-composer-tls

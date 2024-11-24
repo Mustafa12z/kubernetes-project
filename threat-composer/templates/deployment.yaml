@@ -1,0 +1,22 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: threat-composer
+  labels:
+    app: threat-composer
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: threat-composer
+  template:
+    metadata:
+      labels:
+        app: threat-composer
+    spec:
+      containers:
+      - name: threat-composer
+        image: {{ .Values.image.repository }} : {{ .Values.image.tag }}
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        ports:
+        - containerPort: {{ .Values.containerPort }}

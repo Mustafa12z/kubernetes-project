@@ -1,0 +1,20 @@
+replicaCount: 1
+
+image:
+  repository: 590184076390.dkr.ecr.eu-west-2.amazonaws.com/eks-project
+  tag: "latest"
+  pullPolicy: IfNotPresent
+
+containerPort: 3000
+
+service:
+  type: ClusterIP
+  port: 80
+  targetPort: 3000
+
+ingress:
+  enabled: true
+  host: labs.mustafamirreh.com
+  tls:
+    enabled: true
+    secretName: threat-composer-tls
