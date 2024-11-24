@@ -1,5 +1,5 @@
 resource "aws_vpc" "main" {
-  cidr_block            = "10.0.0.0/16"
+  cidr_block           = "10.0.0.0/16"
   enable_dns_support   = var.enable_dns_support
   enable_dns_hostnames = var.enable_dns_hostnames
 
@@ -21,7 +21,8 @@ resource "aws_subnet" "public-subnet" {
   cidr_block        = "10.0.1.0/24"
   availability_zone = "eu-west-2a"
   tags = {
-    Name = var.public_subnet_name
+    "kubernetes.io/cluster/${local.name}" = "shared"
+    "kubernetes.io/role/internal-elb"     = 1
   }
 }
 
@@ -30,7 +31,8 @@ resource "aws_subnet" "public-subnet-b" {
   cidr_block        = "10.0.2.0/24"
   availability_zone = "eu-west-2b"
   tags = {
-    Name = var.public_subnet_name
+    "kubernetes.io/cluster/${local.name}" = "shared"
+    "kubernetes.io/role/internal-elb"     = 1
   }
 }
 
@@ -39,7 +41,8 @@ resource "aws_subnet" "public-subnet-c" {
   cidr_block        = "10.0.3.0/24"
   availability_zone = "eu-west-2c"
   tags = {
-    Name = var.public_subnet_name
+    "kubernetes.io/cluster/${local.name}" = "shared"
+    "kubernetes.io/role/internal-elb"     = 1
   }
 }
 
@@ -69,7 +72,8 @@ resource "aws_subnet" "private-subnet-c" {
   availability_zone = "eu-west-2c"
 
   tags = {
-    Name = var.private_subnet_name
+    "kubernetes.io/cluster/${local.name}" = "shared"
+    "kubernetes.io/role/internal-elb"     = 1
   }
 }
 
@@ -77,7 +81,8 @@ resource "aws_eip" "nat_eip" {
   domain = "vpc"
 
   tags = {
-    Name = "NAT Gateway EIP"
+    "kubernetes.io/cluster/${local.name}" = "shared"
+    "kubernetes.io/role/internal-elb"     = 1
   }
 }
 
@@ -85,7 +90,8 @@ resource "aws_nat_gateway" "nat-gateway" {
   subnet_id     = aws_subnet.public-subnet.id
   allocation_id = aws_eip.nat_eip.id
   tags = {
-    Name = "gw NAT"
+    "kubernetes.io/cluster/${local.name}" = "shared"
+    "kubernetes.io/role/internal-elb"     = 1
   }
 }
 
@@ -177,6 +183,6 @@ resource "aws_security_group" "aws_sg" {
   }
 
   tags = {
-    Name = "ECS Task SG"
+    Name = "EKS Task SG"
   }
 }
