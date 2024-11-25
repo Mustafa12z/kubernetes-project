@@ -16,7 +16,8 @@ spec:
     spec:
       containers:
       - name: threat-composer
-        image: {{ .Values.image.repository }} : {{ .Values.image.tag }}
-        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: "{{ .Values.image.pullPolicy }}"
         ports:
         - containerPort: {{ .Values.containerPort }}
+

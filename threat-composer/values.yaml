@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: 590184076390.dkr.ecr.eu-west-2.amazonaws.com/eks-project
   tag: "latest"
-  pullPolicy: IfNotPresent
+  pullPolicy: Always
 
 containerPort: 3000
 
