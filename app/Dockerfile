@@ -16,9 +16,6 @@ WORKDIR /app
 
 COPY --from=build /app /app 
 
-RUN adduser -D appuser
-USER appuser
-
 EXPOSE 3000
 
 CMD ["yarn", "start"]

@@ -1,3 +1,3 @@
 locals {
-  name = "eksproject"
+  name = "eks-cluster"
 }

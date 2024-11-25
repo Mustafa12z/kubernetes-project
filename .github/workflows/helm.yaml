@@ -1,0 +1,80 @@
+name: Deploy Helm Charts
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    name: Deploy Helm Charts
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v3
+
+    - name: Set up Kubernetes
+      uses: azure/setup-kubectl@v3
+      with:
+        version: 'latest'
+
+    - name: Authenticate with AWS
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: eu-west-2
+
+    - name: Configure kubectl for EKS
+      run: |
+        aws eks update-kubeconfig --region eu-west-2 --name my-eks-cluster
+
+    - name: Add Helm Repositories
+      run: |
+        helm repo add jetstack https://charts.jetstack.io
+        helm repo add bitnami https://charts.bitnami.com/bitnami
+        helm repo update
+
+    - name: Install NGINX Ingress Controller
+      run: |
+        helm install nginx-ingress ingress-nginx/ingress-nginx \
+          --namespace nginx-ingress \
+          --create-namespace \
+          --set controller.service.type=LoadBalancer
+
+    - name: Install Cert-Manager
+      run: |
+        helm install cert-manager jetstack/cert-manager \
+          --namespace cert-manager \
+          --create-namespace \
+          --set installCRDs=true \
+          --values=helm_values/cert-manager.yaml
+
+    - name: Install External-DNS
+      run: |
+        helm install external-dns bitnami/external-dns \
+          --namespace external-dns \
+          --create-namespace \
+          --values=helm_values/external-dns.yaml
+
+    - name: Install Custom Application (Threat Composer)
+      run: |
+        helm install threat-composer ./helm-charts/threat-composer \
+          --namespace threat-namespace \
+          --create-namespace \
+          --values=helm_values/threat-composer.yaml
+
+    - name: Wait for Ingress to be Ready
+      run: |
+        kubectl wait --namespace threat-namespace --for=condition=ready ingress --timeout=120s
+
+    - name: Get Application URL
+      id: get-url
+      run: |
+        kubectl get ingress -n threat-namespace -o jsonpath='{.items[0].status.loadBalancer.ingress[0].hostname}' > app_url.txt
+        cat app_url.txt
+
+    - name: Display Application URL
+      run: |
+        echo "Your application is accessible at: http://$(cat app_url.txt)"
