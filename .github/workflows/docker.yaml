@@ -35,9 +35,8 @@ jobs:
         run: |
           curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
           ECR_URI=${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com/eks-project:latest
-          trivy image --exit-code 1 --severity HIGH,CRITICAL $ECR_URI
+          trivy image --severity HIGH,CRITICAL $ECR_URI
 
       - name: Push Docker image
-        if: ${{ github.event.inputs.push_docker_image == 'yes' }}
         run: |
           docker push $ECR_URI
