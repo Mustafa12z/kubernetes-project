@@ -51,18 +51,18 @@ jobs:
       - name: Set up Terraform
         uses: hashicorp/setup-terraform@v2
         with:
-          terraform_version: 1.5.0 
+          terraform_version: 1.9.8 
 
       - name: Install TFLint
         run: curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
-      - name: TFLint Check
-        working-directory: terraform
-        run: tflint 
-
       - name: Terraform Init
         working-directory: terraform
         run: terraform init
+
+      - name: TFLint Check
+        working-directory: terraform
+        run: tflint 
 
       - name: Terraform Validate
         working-directory: terraform
