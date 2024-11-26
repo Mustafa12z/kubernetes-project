@@ -31,7 +31,7 @@ jobs:
 
     - name: Configure kubectl for EKS
       run: |
-        aws eks update-kubeconfig --region eu-west-2 --name my-eks-cluster
+        aws eks update-kubeconfig --region eu-west-2 --name eks-cluster
 
     - name: Add Helm Repositories
       run: |
@@ -63,7 +63,7 @@ jobs:
 
     - name: Install Custom Application (Threat Composer)
       run: |
-        helm install threat-composer ./helm-charts/threat-composer \
+        helm install threat-composer ./threat-composer \
           --namespace threat-namespace \
           --create-namespace \
           --values=helm_values/threat-composer.yaml
