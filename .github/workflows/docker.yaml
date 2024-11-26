@@ -21,7 +21,6 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Log in to Amazon ECR
-        if: ${{ github.event.inputs.push_docker_image == 'yes' }}
         run: |
           aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com
 
