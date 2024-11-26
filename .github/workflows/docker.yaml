@@ -1,12 +1,14 @@
 name: Pipelines for EKS Project
+
 on:
-  workflow-dispatch:
-    inputs:
-      push_docker_image:
-        description: Do you want to push your Docker image?
-        required: true
-        default: no
-jobs:
+    workflow_dispatch:
+        inputs:
+          confirmation:
+            description: 'Type "yes" to confirm deployment'
+            required: true
+            default: 'no'
+
+jobs: 
   deploy:
     runs-on: ubuntu-latest
     env:
@@ -16,30 +18,25 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
+
       - name: Log in to Amazon ECR
         if: ${{ github.event.inputs.push_docker_image == 'yes' }}
-        run: >
-          aws ecr get-login-password --region eu-west-2 | docker login --username AWS
-          --password-stdin ${{ env.AWS_ACCOUNT_ID
-          }}.dkr.ecr.eu-west-2.amazonaws.com
+        run: |
+          aws ecr get-login-password --region eu-west-2 | docker login --username AWS --password-stdin ${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com
+
       - name: Build Docker image
-        run: >
+        run: |
           cd app
-
           ECR_URI=${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com/eks-project:latest
-
           echo "ECR_URI=$ECR_URI" >> $GITHUB_ENV
-
           docker build -t $ECR_URI .
+
       - name: Scan Docker image with Trivy
-        run: >
-          curl -sfL
-          https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh
-          | sh -s -- -b /usr/local/bin
-
+        run: |
+          curl -sfL https://raw.githubusercontent.com/aquasecurity/trivy/main/contrib/install.sh | sh -s -- -b /usr/local/bin
           ECR_URI=${{ env.AWS_ACCOUNT_ID }}.dkr.ecr.eu-west-2.amazonaws.com/eks-project:latest
-
           trivy image --exit-code 1 --severity HIGH,CRITICAL $ECR_URI
+
       - name: Push Docker image
         if: ${{ github.event.inputs.push_docker_image == 'yes' }}
         run: |
