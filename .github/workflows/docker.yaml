@@ -57,19 +57,19 @@ jobs:
         run: curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
       - name: TFLint Check
-        working-directory: terra
+        working-directory: terraform
         run: tflint 
 
       - name: Terraform Init
-        working-directory: terra
+        working-directory: terraform
         run: terraform init
 
       - name: Terraform Validate
-        working-directory: terra
+        working-directory: terraform
         run: terraform validate
 
       - name: Terraform Apply
-        working-directory: infra
+        working-directory: terraform
         run: terraform apply --auto-approve
 
         
