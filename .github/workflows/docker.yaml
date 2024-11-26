@@ -59,7 +59,7 @@ jobs:
         run: curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
       - name: TFLint Check
-        run: tflint --init && tflint ./terra
+        run: tflint ./terra
 
       - name: Terraform Init
         working-directory: ./terra
