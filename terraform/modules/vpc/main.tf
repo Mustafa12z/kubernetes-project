@@ -52,7 +52,8 @@ resource "aws_subnet" "private-subnet" {
   availability_zone = "eu-west-2a"
 
   tags = {
-    Name = var.private_subnet_name
+    "kubernetes.io/cluster/${local.name}" = "shared"
+    "kubernetes.io/role/internal-elb"     = 1
   }
 }
 
@@ -62,7 +63,8 @@ resource "aws_subnet" "private-subnet-b" {
   availability_zone = "eu-west-2b"
 
   tags = {
-    Name = var.private_subnet_name
+    "kubernetes.io/cluster/${local.name}" = "shared"
+    "kubernetes.io/role/internal-elb"     = 1
   }
 }
 
