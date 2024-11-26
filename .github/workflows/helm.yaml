@@ -54,7 +54,7 @@ jobs:
 
     - name: Install Custom Application (Threat Composer)
       run: |
-        helm install threat-composer ./threat-composer --namespace threat-namespace --create-namespace --values=helm_values/threat-composer.yaml
+        helm install threat-composer ./threat-composer --namespace threat-namespace --create-namespace 
 
     - name: Wait for Ingress to be Ready
       run: |
