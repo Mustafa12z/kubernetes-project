@@ -48,18 +48,17 @@ jobs:
         run: |
           docker push $ECR_URI
 
-      - name: Install Terraform
-        run: |
-          sudo apt-get update && sudo apt-get install -y gnupg software-properties-common curl
-          curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
-          echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
-          sudo apt-get update && sudo apt-get install -y terraform
+      - name: Set up Terraform
+        uses: hashicorp/setup-terraform@v2
+        with:
+          terraform_version: 1.5.0 
 
       - name: Install TFLint
         run: curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
 
       - name: TFLint Check
-        run: tflint ./terra
+        working-directory: ./terra
+        run: tflint 
 
       - name: Terraform Init
         working-directory: ./terra
