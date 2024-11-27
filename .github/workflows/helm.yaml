@@ -31,46 +31,31 @@ jobs:
 
     - name: Configure kubectl for EKS
       run: |
-        aws eks update-kubeconfig --region eu-west-2 --name my-eks-cluster
+        aws eks update-kubeconfig --region eu-west-2 --name eks-cluster
 
     - name: Add Helm Repositories
       run: |
         helm repo add jetstack https://charts.jetstack.io
         helm repo add bitnami https://charts.bitnami.com/bitnami
+        helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
         helm repo update
 
     - name: Install NGINX Ingress Controller
       run: |
-        helm install nginx-ingress ingress-nginx/ingress-nginx \
-          --namespace nginx-ingress \
-          --create-namespace \
-          --set controller.service.type=LoadBalancer
+        helm install nginx-ingress ingress-nginx/ingress-nginx --namespace nginx-ingress --create-namespace 
 
     - name: Install Cert-Manager
       run: |
-        helm install cert-manager jetstack/cert-manager \
-          --namespace cert-manager \
-          --create-namespace \
-          --set installCRDs=true \
-          --values=helm_values/cert-manager.yaml
+        helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set installCRDs=true --values=helm_values/cert-manager.yaml
 
     - name: Install External-DNS
       run: |
-        helm install external-dns bitnami/external-dns \
-          --namespace external-dns \
-          --create-namespace \
-          --values=helm_values/external-dns.yaml
+        helm install external-dns bitnami/external-dns --namespace external-dns --create-namespace --values=helm_values/external-dns.yaml
 
     - name: Install Custom Application (Threat Composer)
       run: |
-        helm install threat-composer ./helm-charts/threat-composer \
-          --namespace threat-namespace \
-          --create-namespace \
-          --values=helm_values/threat-composer.yaml
-
-    - name: Wait for Ingress to be Ready
-      run: |
-        kubectl wait --namespace threat-namespace --for=condition=ready ingress --timeout=120s
+        helm install threat-composer ./threat-composer --namespace threat-namespace --create-namespace
+        kubectl apply -f cert-man/issuer.yaml 
 
     - name: Get Application URL
       id: get-url
