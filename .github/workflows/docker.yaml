@@ -53,9 +53,9 @@ jobs:
         with:
           terraform_version: 1.9.8 
 
-      - name: Install TFLint
-        run: curl -s https://raw.githubusercontent.com/terraform-linters/tflint/master/install_linux.sh | bash
-
+      - name: Set up TFLint
+        uses: terraform-linters/setup-tflint@v1
+        
       - name: Terraform Init
         working-directory: terraform
         run: terraform init

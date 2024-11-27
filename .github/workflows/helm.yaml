@@ -54,11 +54,8 @@ jobs:
 
     - name: Install Custom Application (Threat Composer)
       run: |
-        helm install threat-composer ./threat-composer --namespace threat-namespace --create-namespace 
-
-    - name: Wait for Ingress to be Ready
-      run: |
-        kubectl wait --namespace threat-namespace --for=condition=ready ingress --timeout=120s
+        helm install threat-composer ./threat-composer --namespace threat-namespace --create-namespace
+        kubectl apply -f cert-man/issuer.yaml 
 
     - name: Get Application URL
       id: get-url
