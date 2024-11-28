@@ -59,11 +59,12 @@ jobs:
     - name: Install ArgoCD
       run: |
         helm install argocd argo/argo-cd --namespace argocd --create-namespace --values=helm_values/argocd.yaml
+        kubectl apply -f ingress/argocd-ingress-ingress.yaml
 
     - name: Apply Wildcard Certificate for ArgoCD
       run: |
         kubectl apply -f cert-man/certificate.yaml -n argocd
-        kubectl apply -f ingress/argocd-ingress-ingress.yaml
+        
 
     - name: Install Prometheus
       run: |
