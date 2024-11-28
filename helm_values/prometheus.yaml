@@ -1,0 +1,15 @@
+prometheus:
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: true
+    ingressClassName: "nginx"
+    annotations:
+      nginx.org/hsts: "false"
+      cert-manager.io/cluster-issuer: issuer
+    hosts:
+    - prometheus.labs.mustafamirreh.com
+    tls:
+    - secretName: prometheus-ingress-tls
+      hosts:
+      - prometheus.labs.mustafamirreh.com

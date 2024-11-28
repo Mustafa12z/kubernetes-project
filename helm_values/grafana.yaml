@@ -1,0 +1,15 @@
+grafana:
+  service:
+    type: ClusterIP
+  ingress:
+    enabled: true
+    ingressClassName: "nginx"
+    annotations:
+      nginx.org/hsts: "false"
+      cert-manager.io/cluster-issuer: issuer
+    hosts:
+    - grafana.labs.mustafamirreh.com
+    tls:
+    - secretName: grafana-ingress-tls
+      hosts:
+      - grafana.labs.mustafamirreh.com

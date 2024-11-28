@@ -2,11 +2,11 @@ name: Deploy Helm Charts
 
 on:
   workflow_dispatch:
-      inputs:
-        confirmation:
-          description: 'Type "yes" to confirm deployment'
-          required: true
-          default: 'no'
+    inputs:
+      confirmation:
+        description: 'Type "yes" to confirm deployment'
+        required: true
+        default: 'no'
 
 jobs:
   deploy:
@@ -38,6 +38,8 @@ jobs:
         helm repo add jetstack https://charts.jetstack.io
         helm repo add bitnami https://charts.bitnami.com/bitnami
         helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
+        helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
+        helm repo add grafana https://grafana.github.io/helm-charts
         helm repo update
 
     - name: Install NGINX Ingress Controller
@@ -52,17 +54,27 @@ jobs:
       run: |
         helm install external-dns bitnami/external-dns --namespace external-dns --create-namespace --values=helm_values/external-dns.yaml
 
+    - name: Install ArgoCD
+      run: |
+        helm install argocd argo/argo-cd --namespace argocd --create-namespace --values=helm_values/argocd.yaml 
+
+    - name: Install Prometheus
+      run: |
+        helm upgrade --install prometheus prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace --values=helm_values/prometheus.yaml
+
+    - name: Install Grafana
+      run: |
+        helm upgrade --install grafana grafana/grafana --namespace monitoring --values=helm_values/grafana.yaml
+
     - name: Install Custom Application (Threat Composer)
       run: |
         helm install threat-composer ./threat-composer --namespace threat-namespace --create-namespace
         kubectl apply -f cert-man/issuer.yaml 
 
-    - name: Get Application URL
-      id: get-url
+    - name: Display Application URLs
       run: |
-        kubectl get ingress -n threat-namespace -o jsonpath='{.items[0].status.loadBalancer.ingress[0].hostname}' > app_url.txt
-        cat app_url.txt
-
-    - name: Display Application URL
-      run: |
-        echo "Your application is accessible at: http://$(cat app_url.txt)"
+        echo "Your application is accessible at: http://labs.mustafamirreh.com"
+        echo "ArgoCD is accessible at: https://argocd.labs.mustafamirreh.com"
+        echo "your argocd password is" | kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode; echo
+        echo "Prometheus is accessible at: https://prometheus.labs.mustafamirreh.com"
+        echo "Grafana is accessible at: https://grafana.labs.mustafamirreh.com"
