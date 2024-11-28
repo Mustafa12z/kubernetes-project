@@ -38,7 +38,7 @@ jobs:
         helm repo add jetstack https://charts.jetstack.io
         helm repo add bitnami https://charts.bitnami.com/bitnami
         helm repo add ingress-nginx https://kubernetes.github.io/ingress-nginx
-        helm repo add argo https://argoproj.github.io/argo-hel
+        helm repo add argo https://argoproj.github.io/argo-helm
         helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
         helm repo add grafana https://grafana.github.io/helm-charts
         helm repo update
@@ -57,7 +57,11 @@ jobs:
 
     - name: Install ArgoCD
       run: |
-        helm install argocd argo/argo-cd --namespace argocd --create-namespace --values=helm_values/argocd.yaml 
+        helm install argocd argo/argo-cd --namespace argocd --create-namespace --values=helm_values/argocd.yaml
+
+    - name: Apply Wildcard Certificate for ArgoCD
+      run: |
+        kubectl apply -f cert-man/certificate.yaml -n argocd
 
     - name: Install Prometheus
       run: |
@@ -67,15 +71,20 @@ jobs:
       run: |
         helm upgrade --install grafana grafana/grafana --namespace monitoring --values=helm_values/grafana.yaml
 
+    - name: Apply Wildcard Certificate for Grafana
+      run: |
+        kubectl apply -f cert-man/certificate.yaml -n monitoring
+
     - name: Install Custom Application (Threat Composer)
       run: |
         helm install threat-composer ./threat-composer --namespace threat-namespace --create-namespace
-        kubectl apply -f cert-man/issuer.yaml 
+        kubectl apply -f cert-man/certificate.yaml -n threat-namespace
+
 
     - name: Display Application URLs
       run: |
         echo "Your application is accessible at: http://labs.mustafamirreh.com"
         echo "ArgoCD is accessible at: https://argocd.labs.mustafamirreh.com"
-        echo "your argocd password is" | kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode; echo
+        echo -n "Your ArgoCD password is: "; kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode; echo
         echo "Prometheus is accessible at: https://prometheus.labs.mustafamirreh.com"
         echo "Grafana is accessible at: https://grafana.labs.mustafamirreh.com"

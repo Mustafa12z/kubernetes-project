@@ -1,0 +1,11 @@
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: wildcard-labs-tls
+spec:
+  secretName: wildcard-tls  
+  dnsNames:
+    - "*.labs.mustafamirreh.com"
+  issuerRef:
+    name: issuer
+    kind: ClusterIssuer
