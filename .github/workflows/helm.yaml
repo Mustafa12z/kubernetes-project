@@ -59,7 +59,7 @@ jobs:
     - name: Install ArgoCD
       run: |
         helm install argocd argo/argo-cd --namespace argocd --create-namespace --values=helm_values/argocd.yaml
-        kubectl apply -f ingress/argocd-ingress-ingress.yaml
+        kubectl apply -f ingress/argocd-ingress.yaml
 
     - name: Apply Wildcard Certificate for ArgoCD
       run: |
