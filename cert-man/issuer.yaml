@@ -12,8 +12,6 @@ spec:
       - dns01:
           route53:
             hostedZoneID: Z02400013U7K3OO6ZCCK8  
-            region: eu-west-2                   
-          selector:
-            dnsZones:
-              - "labs.mustafamirreh.com"
+            region: eu-west-2
+
 

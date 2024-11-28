@@ -2,7 +2,7 @@ prometheus:
   service:
     type: ClusterIP
   ingress:
-    enabled: true
+    enabled: false
     ingressClassName: "nginx"
     annotations:
       nginx.org/hsts: "false"
@@ -10,6 +10,6 @@ prometheus:
     hosts:
     - prometheus.labs.mustafamirreh.com
     tls:
-    - secretName: prometheus-ingress-tls
+    - secretName: wildcard-tls
       hosts:
       - prometheus.labs.mustafamirreh.com
