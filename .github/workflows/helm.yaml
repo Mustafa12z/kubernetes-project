@@ -50,6 +50,7 @@ jobs:
     - name: Install Cert-Manager
       run: |
         helm install cert-manager jetstack/cert-manager --namespace cert-manager --create-namespace --set installCRDs=true --values=helm_values/cert-manager.yaml
+        kubectl apply -f cert-man/issuer.yaml
 
     - name: Install External-DNS
       run: |
@@ -62,18 +63,25 @@ jobs:
     - name: Apply Wildcard Certificate for ArgoCD
       run: |
         kubectl apply -f cert-man/certificate.yaml -n argocd
+        kubectl apply -f ingress/argocd-ingress-ingress.yaml
 
     - name: Install Prometheus
       run: |
-        helm upgrade --install prometheus prometheus-community/kube-prometheus-stack --namespace monitoring --create-namespace --values=helm_values/prometheus.yaml
+        helm upgrade --install prometheus prometheus-community/kube-prometheus-stack --namespace prometheus --create-namespace --values=helm_values/prometheus.yaml
+        kubectl apply -f ingress/prometheus-ingress.yaml
+
+    - name: Apply Wildcard Certificate for Prometheus
+      run: |
+        kubectl apply -f cert-man/certificate.yaml -n prometheus
 
     - name: Install Grafana
       run: |
-        helm upgrade --install grafana grafana/grafana --namespace monitoring --values=helm_values/grafana.yaml
+        helm upgrade --install grafana grafana/grafana --namespace grafana --create-namespace --values=helm_values/grafana.yaml
+        kubectl apply -f ingress/grafana-ingress.yaml
 
     - name: Apply Wildcard Certificate for Grafana
       run: |
-        kubectl apply -f cert-man/certificate.yaml -n monitoring
+        kubectl apply -f cert-man/certificate.yaml -n grafana
 
     - name: Install Custom Application (Threat Composer)
       run: |
