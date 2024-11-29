@@ -68,7 +68,7 @@ jobs:
 
     - name: Install Prometheus
       run: |
-        helm upgrade --install prometheus prometheus-community/kube-prometheus-stack --namespace prometheus --create-namespace --values=helm_values/prometheus.yaml
+        helm install prometheus prometheus-community/kube-prometheus-stack --namespace prometheus --create-namespace --values=helm_values/prometheus.yaml
         kubectl apply -f ingress/prometheus-ingress.yaml
 
     - name: Apply Wildcard Certificate for Prometheus
@@ -77,7 +77,7 @@ jobs:
 
     - name: Install Grafana
       run: |
-        helm upgrade --install grafana grafana/grafana --namespace grafana --create-namespace --values=helm_values/grafana.yaml
+        helm install grafana grafana/grafana --namespace grafana --create-namespace --values=helm_values/grafana.yaml
         kubectl apply -f ingress/grafana-ingress.yaml
 
     - name: Apply Wildcard Certificate for Grafana
@@ -92,7 +92,7 @@ jobs:
 
     - name: Display Application URLs
       run: |
-        echo "Your application is accessible at: http://labs.mustafamirreh.com"
+        echo "Your application is accessible at: https://app.labs.mustafamirreh.com"
         echo "ArgoCD is accessible at: https://argocd.labs.mustafamirreh.com"
         echo -n "Your ArgoCD password is: "; kubectl -n argocd get secret argocd-initial-admin-secret -o jsonpath="{.data.password}" | base64 --decode; echo
         echo "Prometheus is accessible at: https://prometheus.labs.mustafamirreh.com"
