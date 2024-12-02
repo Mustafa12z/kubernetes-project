@@ -1,0 +1,19 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: threat-composer
+spec:
+  destination:
+    name: ''
+    namespace: threat-namespace
+    server: https://kubernetes.default.svc
+  source:
+    path: threat-composer
+    repoURL: https://github.com/Mustafa12z/kubernetes-project
+    targetRevision: main
+  sources: []
+  project: default
+  syncPolicy:
+    automated:
+      prune: false
+      selfHeal: false
